@@ -1,0 +1,43 @@
+name: Build
+
+on: [workflow_dispatch]
+
+jobs:
+  Build:
+    strategy:
+      matrix:
+        options:
+          - os: ubuntu-latest
+            framework: net6.0
+            runtime: -x64
+            codecov: false
+          - os: windows-latest
+            framework: net6.0
+            runtime: -x64
+            codecov: true
+
+    runs-on: ${{matrix.options.os}}
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: DotNet Setup
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            6.0.x
+            5.0.x
+
+  Publish:
+    needs: [Build]
+
+    runs-on: ubuntu-latest
+      - name: Write env vars
+        shell: bash
+        run: echo "$CI" > env.txt
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: env.txt

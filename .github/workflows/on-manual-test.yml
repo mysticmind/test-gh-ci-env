@@ -22,22 +22,26 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v2
 
-      - name: DotNet Setup
-        uses: actions/setup-dotnet@v1
+      - name: Write env vars
+        shell: bash
+        run: echo "$CI" > env1.txt
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
         with:
-          dotnet-version: |
-            6.0.x
-            5.0.x
+          path: env1.txt
 
   Publish:
     needs: [Build]
 
     runs-on: ubuntu-latest
+
+    steps:
       - name: Write env vars
         shell: bash
-        run: echo "$CI" > env.txt
+        run: echo "$CI" > env2.txt
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: env.txt
+          path: env2.txt
